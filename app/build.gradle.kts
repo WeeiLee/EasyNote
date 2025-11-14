@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,8 +18,17 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // chatgpt: leer la clave API desde local.properties
+        val apiKey = gradleLocalProperties(rootDir, providers)
+            .getProperty("OPENAI_API_KEY") ?: ""
+
+        buildConfigField(
+            "String",
+            "OPENAI_API_KEY",
+            "\"$apiKey\""   // ← IMPORTANTE: comillas internas
+        )
     }
 
     buildTypes {
@@ -38,6 +49,17 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    packaging {
+        resources {
+            // excluir el archivo duplicado
+            excludes += "META-INF/DEPENDENCIES"
+
+            // alternativa: conservar la primera ocurrencia (si prefieres)
+            // pickFirsts += listOf("META-INF/DEPENDENCIES")
+        }
     }
 }
 
@@ -57,4 +79,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation("com.openai:openai-java:4.7.1")
 }
