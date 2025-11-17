@@ -1,15 +1,10 @@
 package com.example.easynote.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -24,15 +19,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.easynote.R
+import com.example.easynote.service.local.AudioRepository
+import com.example.easynote.service.local.AudioViewModel
 import com.example.easynote.ui.theme.EasyNoteTheme
+import com.example.easynote.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.easynote.models.Audio
+import com.example.easynote.models.Event
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun PreviewTask() {
     EasyNoteTheme(darkTheme = false) {
@@ -42,6 +40,13 @@ fun PreviewTask() {
 
 @Composable
 fun HomeScreen() {
+
+    val context = LocalContext.current
+
+    val audioViewModel: AudioViewModel = viewModel(
+        factory = ViewModelFactory(context)
+    )
+
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -62,7 +67,8 @@ fun HomeScreen() {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                MainSection(
+
+                MenuScreen(
                     isMenuOpen = isMenuOpen,
                     onMenuClick = {
                         scope.launch {
@@ -74,32 +80,21 @@ fun HomeScreen() {
 
                 Box(
                     modifier = Modifier
-                        .height(650.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_box_24),
-                        contentDescription = "Empty Box",
-                        modifier = Modifier.size(64.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
 
                     HoldToRecordButton(
                         onStart = {
-                            // → Cuando empieza a presionar
-                            Log.d("Record", "Iniciando grabación…")
-                            // Aquí puedes iniciar AudioRecord() o tu lógica
+                            audioViewModel.startRecording()
                         },
                         onStop = {
-                            // → Cuando suelta el botón
-                            Log.d("Record", "Grabación detenida")
-                            // Aquí paras la grabación
+                            val path = audioViewModel.stopRecording()
+                            val content = processAudioToTxt(path)
+                            val event: Event = Event(content, Audio(path))
+                        },
+                        onClick = {
+                            // TODO
                         }
                     )
                 }
@@ -108,6 +103,9 @@ fun HomeScreen() {
     }
 }
 
+fun processAudioToTxt(path: String): String{
+    return ""
+}
 
 @Composable
 fun TopScrollableTab() {
@@ -115,6 +113,7 @@ fun TopScrollableTab() {
     var selectedTab by remember { mutableIntStateOf(0) }
 
     val tabs = listOf(
+        "Home",
         "Event",
         "Clock",
         "Weight",

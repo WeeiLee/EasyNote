@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,9 +31,11 @@ import com.example.easynote.R
 @Composable
 fun HoldToRecordButton(
     onStart: () -> Unit,
-    onStop: () -> Unit
+    onStop: () -> Unit,
+    onClick: () -> Unit
 ) {
     var pressed by remember { mutableStateOf(false) }
+    var downTime by remember { mutableLongStateOf(0L) }
 
     Box(
         modifier = Modifier
@@ -45,12 +48,19 @@ fun HoldToRecordButton(
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         pressed = true
+                        downTime = System.currentTimeMillis()
                         onStart()
                     }
+
                     MotionEvent.ACTION_UP,
                     MotionEvent.ACTION_CANCEL -> {
                         pressed = false
                         onStop()
+
+                        val elapsed = System.currentTimeMillis() - downTime
+                        if (elapsed < 200) {
+                            onClick()
+                        }
                     }
                 }
                 true

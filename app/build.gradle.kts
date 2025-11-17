@@ -81,4 +81,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation("com.openai:openai-java:4.7.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 }
