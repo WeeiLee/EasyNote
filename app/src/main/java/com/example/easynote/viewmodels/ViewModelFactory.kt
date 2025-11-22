@@ -3,8 +3,8 @@ package com.example.easynote.viewmodels
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.easynote.service.local.AudioRepository
-import com.example.easynote.service.local.AudioViewModel
+import com.example.easynote.service.local.audio.AudioRepository
+import com.example.easynote.service.local.audio.AudioViewModel
 
 class ViewModelFactory(
     private val context: Context

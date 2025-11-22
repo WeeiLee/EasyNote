@@ -6,19 +6,20 @@ import java.util.Map;
 public class Note {
     private final Integer id; // id so user can decide how to order it
     private final String title;
-    private final Map<String, Object> content;
+    private final Map<String, Object> fields;
     private final String originalContent; // original content before any processing
     private final String summary; // summary of the note
+    private final Integer noteTableId;
     private final String timestamp; // timestamp to sort by time
 
-
-    public Note(Integer id, String originalContent, String summary, String title, Map<String, Object> content, String timestamp) {
+    public Note(Integer id, String title, String summary, String originalContent, Map<String, Object> fields, Integer noteTableId, String timestamp) {
         this.id = id;
         this.title = title;
-        this.content = content;
+        this.fields = fields;
         this.originalContent = originalContent;
         this.summary = summary;
         this.timestamp = timestamp;
+        this.noteTableId = noteTableId;
     }
 
     // Getters and Setters
@@ -26,8 +27,8 @@ public class Note {
         return title;
     }
 
-    public Map<String, Object> getContent() {
-        return content;
+    public Map<String, Object> getFields() {
+        return fields;
     }
 
     public String getTimestamp() {
@@ -44,5 +45,9 @@ public class Note {
 
     public String getSummary() {
         return summary;
+    }
+
+    public Integer getNoteTableId() {
+        return noteTableId;
     }
 }

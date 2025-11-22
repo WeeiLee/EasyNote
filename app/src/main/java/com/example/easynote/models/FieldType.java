@@ -6,5 +6,6 @@ public enum FieldType {
     REAL,
     BLOB,
     BOOLEAN,
-    TIME
+    TIME,
+    EVENT
 }

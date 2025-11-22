@@ -5,14 +5,14 @@ import java.util.Map;
 public class ChatGptResponse {
     private final String summary;
     private final String title;
-    private final String table;
+    private final Integer tableId;
     private final String timestamp;
     private final Map<String, Object> fields;
 
-    public ChatGptResponse(String title, String summary, String table, Map<String, Object> fields, String timestamp) {
-        this.summary = summary;
-        this.table = table;
+    public ChatGptResponse(Integer tableId, String title, String summary, Map<String, Object> fields, String timestamp) {
+        this.tableId = tableId;
         this.title = title;
+        this.summary = summary;
         this.timestamp = timestamp;
         this.fields = fields;
     }
@@ -26,8 +26,8 @@ public class ChatGptResponse {
     public String getTitle() {
         return title;
     }
-    public String getTable() {
-        return table;
+    public Integer getTableId() {
+        return tableId;
     }
     public String getTimestamp() {
         return timestamp;
