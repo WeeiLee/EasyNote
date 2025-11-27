@@ -20,17 +20,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easynote.service.local.AudioRepository
 import com.example.easynote.service.local.AudioViewModel
 import com.example.easynote.ui.theme.EasyNoteTheme
-import com.example.easynote.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.easynote.models.Audio
 import com.example.easynote.models.Event
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun PreviewTask() {
     EasyNoteTheme(darkTheme = false) {
@@ -43,10 +43,7 @@ fun HomeScreen() {
 
     val context = LocalContext.current
 
-    val audioViewModel: AudioViewModel = viewModel(
-        factory = ViewModelFactory(context)
-    )
-
+    val audioViewModel: AudioViewModel = viewModel()
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -86,7 +83,7 @@ fun HomeScreen() {
 
                     HoldToRecordButton(
                         onStart = {
-                            audioViewModel.startRecording()
+                            audioViewModel.startRecording(context)
                         },
                         onStop = {
                             val path = audioViewModel.stopRecording()

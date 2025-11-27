@@ -1,13 +1,18 @@
 package com.example.easynote.service.local
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 
-class AudioViewModel(
-    private val audioRepository: AudioRepository
-) : ViewModel() {
+class AudioViewModel : ViewModel() {
 
-    fun startRecording() {
-        audioRepository.startRecording()
+    private lateinit var audioRepository: AudioRepository
+
+    fun insertRepository(rep: AudioRepository) {
+        audioRepository = rep
+    }
+
+    fun startRecording(context: Context) {
+        audioRepository.startRecording(context)
     }
 
     fun stopRecording(): String {

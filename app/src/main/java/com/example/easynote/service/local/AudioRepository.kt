@@ -3,26 +3,12 @@ package com.example.easynote.service.local
 import android.content.Context
 import android.media.MediaRecorder
 
-class AudioRepository private constructor(
-    private val context: Context
-) {
-    companion object {
-        @Volatile private var INSTANCE: AudioRepository? = null
-
-        fun getInstance(context: Context): AudioRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: AudioRepository(context.applicationContext).also {
-                    INSTANCE = it
-                }
-            }
-        }
-    }
+object AudioRepository {
     private var recorder: MediaRecorder? = null
     private var filePath: String = ""
 
-    fun startRecording() {
+    fun startRecording(context: Context) {
         filePath = "${context.filesDir}/audio_${System.currentTimeMillis()}.3gp"
-
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
