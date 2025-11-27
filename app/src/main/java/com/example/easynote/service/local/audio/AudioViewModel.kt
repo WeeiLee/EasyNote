@@ -1,4 +1,4 @@
-package com.example.easynote.service.local
+package com.example.easynote.service.local.audio
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

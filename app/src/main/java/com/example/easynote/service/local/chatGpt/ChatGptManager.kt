@@ -1,10 +1,12 @@
-package com.example.easynote.service.local
+package com.example.easynote.service.local.chatGpt
+
 import com.example.easynote.models.ChatGptResponse
 import com.example.easynote.models.NoteTable
-import com.example.easynote.service.remote.ChatGptService
+import com.example.easynote.service.remote.chatGpt.ChatGptService
 import org.json.JSONObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.iterator
 
 object ChatGptManager {
     val chatGptService = ChatGptService
@@ -28,10 +30,12 @@ object ChatGptManager {
             }
 
             """
-        Table name: ${table.title}
-        Description: ${table.description}
-        Fields: $fieldsText
-        """.trimIndent()
+            Table name: ${table.title}
+            Table id: ${table.id}
+            Description: ${table.description}
+            Fields:
+            $fieldsText
+            """.trimIndent()
         }
 
         // --- Prompt final ---
@@ -48,11 +52,26 @@ object ChatGptManager {
         - Summarize the meaning of the user message in one short sentence.
         - Extract values for each field of the selected table.  
           If a field cannot be extracted, return null.
+        - Now is "${LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}".
+        - EVENT type is the same as DATE but used for reminders/alerts.
+        - All field values MUST strictly match the field type defined in the table:
+          * TEXT → plain string without descriptions, only extracted raw value.
+          * INTEGER → numeric value.
+          * TIME → a valid date or datetime in ISO format (YYYY-MM-DD or YYYY-MM-DDTHH:mm).
+          * EVENT → ONLY a date/time in ISO format; NEVER text.
+          * BOOLEAN → true or false.
+          * REAL → numeric value, can have decimals.
+        - Title must be a short and unique text summarizing the note.
+        - "selected_table" MUST be an integer matching EXACTLY one of the ids of the tables listed.
+        - NEVER return the table name. ONLY return the numeric id.
+        - Do not generate explanations, notes, interpretations, or paraphrased content inside field values.
+
+        
         
         Output must be a JSON object with this exact format:
         
         {
-          "selected_table": "<table_name>",
+          "selected_table": <table_id_as_integer>,
           "title": "<note_title>",
           "summary": "<short summary>",
           "fields": {
@@ -76,7 +95,7 @@ object ChatGptManager {
 
         // Datos base
         val summary = json.optString("summary", "")
-        val table = json.optString("selected_table", "")
+        val tableId = json.optString("selected_table", "").toInt()
         val fieldsJson = json.optJSONObject("fields") ?: JSONObject()
         val title = json.optString("title", "")
 
@@ -90,9 +109,9 @@ object ChatGptManager {
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
         return ChatGptResponse(
+            tableId,
             title,
             summary,
-            table,
             fieldsMap,
             timestamp
         )

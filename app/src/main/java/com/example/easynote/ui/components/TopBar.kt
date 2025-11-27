@@ -22,8 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.easynote.service.local.AudioRepository
-import com.example.easynote.service.local.AudioViewModel
+import com.example.easynote.service.local.audio.AudioViewModel
 import com.example.easynote.ui.theme.EasyNoteTheme
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel

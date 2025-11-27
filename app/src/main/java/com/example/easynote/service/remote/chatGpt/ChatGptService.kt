@@ -1,4 +1,4 @@
-package com.example.easynote.service.remote
+package com.example.easynote.service.remote.chatGpt
 
 import com.example.easynote.BuildConfig
 import com.openai.client.OpenAIClient
@@ -20,14 +20,14 @@ object ChatGptService {
             )
         }
 
-        OpenAIOkHttpClient
+        OpenAIOkHttpClient.Companion
             .builder()
             .apiKey(API_KEY)
             .build()
     }
 
     suspend fun request(inputText: String): Response = withContext(Dispatchers.IO) {
-        val params = ResponseCreateParams.builder()
+        val params = ResponseCreateParams.Companion.builder()
             .input(inputText)
             .model("gpt-5-nano")
             .build()
