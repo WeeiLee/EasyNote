@@ -1,6 +1,8 @@
 package com.example.easynote.ui.components
 
+import android.icu.number.IntegerWidth
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,13 +23,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.easynote.R
+import com.example.easynote.models.Note
 
 @Composable
 fun MenuScreen(
     modifier: Modifier = Modifier,
     isMenuOpen: Boolean,
+    index: Int,
     onMenuClick: () -> Unit
 ) {
     Column(Modifier) {
@@ -40,8 +47,40 @@ fun MenuScreen(
                 contentDescription = "Menú"
             )
         }
-        HomeCompose()
     }
+}
+@Composable
+fun OthersCompose() {
+    Text("others")
+}
+
+@Composable
+fun SpendingCompose() {
+    Text("spending")
+}
+
+@Composable
+fun WeightCompose() {
+    Text("weight")
+}
+
+@Composable
+fun ClockCompose() {
+    Text("clock")
+}
+
+@Composable
+fun EventCompose() {
+    Text("event")
+}
+
+@Composable
+fun HomeCompose() {
+    Icon(
+        painter = painterResource(id = R.drawable.outline_box_24),
+        contentDescription = "Empty Box",
+        modifier = Modifier.size(64.dp)
+    )
 }
 
 @Composable
@@ -62,17 +101,21 @@ fun AppDrawerContent() {
 }
 
 @Composable
-fun HomeCompose() {
+fun contentCard(index: Int) {
     Box(
         modifier = Modifier
             .height(650.dp)
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.outline_box_24),
-            contentDescription = "Empty Box",
-            modifier = Modifier.size(64.dp)
-        )
+        when (index) {
+            0 -> HomeCompose()
+            1 -> EventCompose()
+            2 -> ClockCompose()
+            3 -> WeightCompose()
+            4 -> SpendingCompose()
+            5 -> OthersCompose()
+        }
     }
 }
+
