@@ -37,7 +37,7 @@ import com.example.easynote.ui.components.AppDrawerContent
 import com.example.easynote.ui.components.HoldToRecordButton
 import com.example.easynote.ui.components.MenuScreen
 import com.example.easynote.ui.components.TopScrollableTab
-import com.example.easynote.ui.components.contentCard
+import com.example.easynote.ui.components.ContentCard
 import com.example.easynote.ui.components.processAudioToTxt
 import com.example.easynote.ui.theme.EasyNoteTheme
 import kotlinx.coroutines.launch
@@ -46,7 +46,8 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
-
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 
 
 class MainActivity : ComponentActivity() {
@@ -82,13 +83,16 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
 
         val audioViewModel: AudioViewModel = viewModel()
-
+        LaunchedEffect(Unit) {
+            audioViewModel.configure(context)
+        }
+        audioViewModel.configure(context)
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         val isMenuOpen = drawerState.isOpen
         val text by audioViewModel.text.collectAsState()
         val isListening by audioViewModel.isListening.collectAsState()
-        var selectedTab by remember { mutableStateOf(0) }
+        var selectedTab by remember { mutableIntStateOf(0) }
 
 
 
@@ -138,12 +142,11 @@ class MainActivity : ComponentActivity() {
                                 audioViewModel.stopRecording()
                                 Log.d("---------------", text)
 
-
                             },
                             onClick = {
                                 selectedTab = 0
                                 Log.d("---------onclick------", text)
-                                Log.d("---------jajaja------", text)
+
                             }
                         )
                     }

@@ -101,10 +101,13 @@ fun AppDrawerContent() {
 }
 
 @Composable
-fun contentCard(index: Int) {
+fun ContentCard(
+    index: Int,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier
-            .height(650.dp)
+            .fillMaxHeight()
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {

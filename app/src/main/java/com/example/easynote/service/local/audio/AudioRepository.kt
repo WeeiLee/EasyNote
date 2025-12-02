@@ -2,7 +2,7 @@ package com.example.easynote.service.local.audio
 
 import android.content.Context
 import android.media.MediaRecorder
-/*
+
 object AudioRepository {
     private var recorder: MediaRecorder? = null
     private var filePath: String = ""
@@ -28,4 +28,3 @@ object AudioRepository {
         return filePath
     }
 }
-*/

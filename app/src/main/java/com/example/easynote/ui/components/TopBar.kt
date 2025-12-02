@@ -4,12 +4,15 @@ import android.media.MediaPlayer
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalNavigationDrawer
@@ -23,6 +26,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +50,7 @@ import com.example.easynote.models.Event
 import kotlinx.coroutines.delay
 import kotlin.text.toInt
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun PreviewTask() {
     EasyNoteTheme(darkTheme = false) {
@@ -56,71 +61,51 @@ fun PreviewTask() {
 @Composable
 fun HomeScreen() {
 
-    val context = LocalContext.current
+    /*val context = LocalContext.current
 
     val audioViewModel: AudioViewModel = viewModel()
-
+    LaunchedEffect(Unit) {
+        audioViewModel.configure(context)
+    }
+    audioViewModel.configure(context)
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val isMenuOpen = drawerState.isOpen
-    var selectedTab by remember { mutableStateOf(0) }
+    val text by audioViewModel.text.collectAsState()
+    val isListening by audioViewModel.isListening.collectAsState()
+    */
+    var selectedTab by remember { mutableIntStateOf(0) }
 
+    Scaffold(
+        topBar = {
+            TopScrollableTab(
+                selectedTab = selectedTab,
+                onTabSelected = { index -> selectedTab = index }
+            )
+        },
+        bottomBar = {
+            BottomBarWithHoldRecord(
+                onRecordStop = {},
+                onRecordStart = {},
+                onRightClick = {},
+                onLeftClick = {}
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // El contenido ocupa el espacio disponible
+            ContentCard(selectedTab)
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = { AppDrawerContent() }
-    ) {
-        Scaffold(
-            topBar = {
-                TopScrollableTab(
-                    selectedTab = selectedTab,
-                    onTabSelected = { index -> selectedTab = index}
-                )
-            }
-        ) { innerPadding ->
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-
-                MenuScreen(
-                    isMenuOpen = isMenuOpen,
-                    index = selectedTab,
-                    onMenuClick = {
-                        scope.launch {
-                            if (drawerState.isClosed) drawerState.open()
-                            else drawerState.close()
-                        }
-                    }
-                )
-                contentCard(selectedTab)
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    HoldToRecordButton(
-                        onStart = {
-                            audioViewModel.startRecording(context)
-                        },
-                        onStop = {
-                            val path = audioViewModel.stopRecording()
-                            //val content = processAudioToTxt(path)
-                            //val event: Event = Event(content, Audio(path))
-                        },
-                        onClick = {
-                            selectedTab = 0
-                        }
-                    )
-                }
-            }
+            // Espacio para que el FAB no tape el contenido
+            //Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
+
 
 fun processAudioToTxt(path: String): String{
     return ""
