@@ -30,49 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.easynote.R
 import com.example.easynote.models.Note
 
-@Composable
-fun MenuScreen(
-    modifier: Modifier = Modifier,
-    isMenuOpen: Boolean,
-    index: Int,
-    onMenuClick: () -> Unit
-) {
-    Column(Modifier) {
-        IconButton(onClick = onMenuClick) {
-            Icon(
-                imageVector = if (isMenuOpen)
-                    Icons.Outlined.Close
-                else
-                    Icons.Outlined.Menu,
-                contentDescription = "Menú"
-            )
-        }
-    }
-}
-@Composable
-fun OthersCompose() {
-    Text("others")
-}
 
-@Composable
-fun SpendingCompose() {
-    Text("spending")
-}
-
-@Composable
-fun WeightCompose() {
-    Text("weight")
-}
-
-@Composable
-fun ClockCompose() {
-    Text("clock")
-}
-
-@Composable
-fun EventCompose() {
-    Text("event")
-}
 
 @Composable
 fun HomeCompose() {
@@ -83,22 +41,6 @@ fun HomeCompose() {
     )
 }
 
-@Composable
-fun AppDrawerContent() {
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(300.dp)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(20.dp)
-    ) {
-        Text("Inicio")
-        Spacer(modifier = Modifier.height(12.dp))
-        Text("Perfil")
-        Spacer(modifier = Modifier.height(12.dp))
-        Text("Ajustes")
-    }
-}
 
 @Composable
 fun ContentCard(
@@ -113,11 +55,11 @@ fun ContentCard(
     ) {
         when (index) {
             0 -> HomeCompose()
-            1 -> EventCompose()
-            2 -> ClockCompose()
-            3 -> WeightCompose()
-            4 -> SpendingCompose()
-            5 -> OthersCompose()
+            1 -> NoteListScreen(0)
+            2 -> NoteListScreen(1)
+            3 -> NoteListScreen(2)
+            4 -> NoteListScreen(3)
+            5 -> NoteListScreen(4)
         }
     }
 }

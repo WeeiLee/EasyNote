@@ -4,14 +4,15 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DaoNote {
     @Query("SELECT * FROM Notes")
-    suspend fun getNotes(): List<Notes>
+    fun getNotes(): Flow<List<Notes>>
 
     @Query("SELECT * FROM Notes WHERE noteTableId = :tableId")
-    suspend fun getNotesByTableId(tableId: Int): List<Notes>
+    fun getNotesByTableId(tableId: Int): Flow<List<Notes>>
 
     @Query("DELETE FROM Notes WHERE id = :noteId")
     suspend fun deleteNoteById(noteId: Int)

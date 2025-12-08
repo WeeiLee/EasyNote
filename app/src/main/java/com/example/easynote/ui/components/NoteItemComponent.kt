@@ -12,20 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easynote.models.Note
 
 @Composable
-fun noteItem(
+fun NoteItem(
     note: Note,
-    onClick: (Note) -> Unit,
+    onClick: (Note) -> Unit = {},
     onDeleteClick : (Int) -> Unit
 ){
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(note) }
+            .clickable {}
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         // Title

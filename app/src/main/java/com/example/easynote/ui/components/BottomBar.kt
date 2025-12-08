@@ -41,14 +41,16 @@ fun BottomBarWithHoldRecord(
     onRecordStop: () -> Unit,
     onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
-    isRecording: Boolean = false
+    isRecording: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.primary)
             .fillMaxWidth()
-            .height(70.dp),
+            .height(80.dp),
         tonalElevation = 8.dp
     ) {
         Row(
@@ -65,7 +67,7 @@ fun BottomBarWithHoldRecord(
             // Botón de hold para grabar
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(65.dp)
                     .clip(CircleShape)
                     .background(
                         if (isRecording || isPressed) MaterialTheme.colorScheme.error

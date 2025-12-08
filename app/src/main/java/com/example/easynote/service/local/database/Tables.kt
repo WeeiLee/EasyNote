@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.easynote.models.FieldType
 
 @Entity
-class Tables (
+data class Tables (
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 
