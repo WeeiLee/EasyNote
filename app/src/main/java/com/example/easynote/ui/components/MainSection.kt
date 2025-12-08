@@ -30,7 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.easynote.R
 import com.example.easynote.models.Note
-
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import com.airbnb.lottie.compose.*
 
 
 @Composable
@@ -42,11 +46,33 @@ fun HomeCompose() {
     )
 }
 
+@Composable
+fun DotLottieAnimationPlayer(isRecording: Boolean) {
+    val url =
+        "https://lottie.host/0355fd56-e46c-49e3-9543-e243609a1271/M6xE0Cp9qa.lottie"
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.Url(url)
+    )
 
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = if (isRecording) LottieConstants.IterateForever else 1,
+        speed = if (isRecording) 1f else 0f,
+        isPlaying = isRecording
+    )
+
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = Modifier.size(200.dp)
+    )
+}
 @Composable
 fun ContentCard(
     index: Int,
+    isListening: Boolean,
     navController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
@@ -55,7 +81,7 @@ fun ContentCard(
         contentAlignment = Alignment.Center
     ) {
         when (index) {
-            0 -> HomeCompose()
+            0 -> DotLottieAnimationPlayer(isListening)
             1 -> NoteListScreen(0, navController)
             2 -> NoteListScreen(1, navController)
             3 -> NoteListScreen(2, navController)

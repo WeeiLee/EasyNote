@@ -36,7 +36,9 @@ fun NoteListScreen(
         items(notes) { item ->
             NoteItem(
                 note = item,
-                navController
+                onClick = {
+                    id -> navController.navigate("detail/${id}")
+                }
             )
             NoteDivider()
         }

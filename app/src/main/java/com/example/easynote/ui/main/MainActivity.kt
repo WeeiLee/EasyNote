@@ -45,7 +45,6 @@ import com.example.easynote.ui.components.SuccessToast
 import com.example.easynote.viewmodels.TablesViewModel
 import kotlinx.coroutines.delay
 
-
 class MainActivity : ComponentActivity() {
     private val RECORD_AUDIO_REQUEST = 100
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,6 +135,7 @@ class MainActivity : ComponentActivity() {
                     Text(text)
                     ContentCard(
                         selectedTab,
+                        isListening,
                         navController
                         )
                 }

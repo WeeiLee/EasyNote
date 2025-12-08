@@ -20,14 +20,12 @@ import com.example.easynote.models.Note
 @Composable
 fun NoteItem(
     note: Note,
-    navController: NavHostController,
+    onClick: (Int) -> Unit
 ){
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                Log.d("message", "navegando a content")
-                navController.navigate("detail/${note.id}")}
+            .clickable {onClick(note.id)}
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         // Title
