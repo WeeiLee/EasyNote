@@ -37,12 +37,13 @@ class AudioViewModel(
                     ?.firstOrNull() ?: ""
 
                 _isListening.value = false
+
             }
 
             override fun onPartialResults(results: Bundle?) {
-                _text.value = results
+                /*_text.value = results
                     ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    ?.firstOrNull() ?: ""
+                    ?.firstOrNull() ?: ""*/
             }
 
             override fun onError(error: Int) {

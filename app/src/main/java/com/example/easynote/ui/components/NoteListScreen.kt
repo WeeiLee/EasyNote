@@ -17,7 +17,10 @@ import com.example.easynote.viewmodels.NotesViewModelFactory
 @Composable
 fun NoteListScreen(tableId: Int) {
     val factory = remember { NotesViewModelFactory(tableId) }
-    val vm: NotesViewModel = viewModel(factory = factory)
+    val vm: NotesViewModel = viewModel(
+        key = "NotesVM_$tableId",
+        factory = factory
+    )
 
     val notes by vm.notes.collectAsState()
 

@@ -36,7 +36,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.easynote.models.Note
+import com.example.easynote.models.NoteTable
+import com.example.easynote.service.local.chatGpt.ChatGptManager
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
+import com.example.easynote.viewmodels.TablesViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -72,6 +76,8 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
 
         val audioViewModel: AudioViewModel = viewModel()
+        val tablesViewModel: TablesViewModel = viewModel()
+
         LaunchedEffect(Unit) {
             audioViewModel.configure(context)
         }
@@ -79,10 +85,16 @@ class MainActivity : ComponentActivity() {
         val text by audioViewModel.text.collectAsState()
         val isListening by audioViewModel.isListening.collectAsState()
         var selectedTab by remember { mutableIntStateOf(0) }
+        val tables by tablesViewModel.tables.collectAsState()
 
-
+        LaunchedEffect(text) {
+            if (!isListening && text.isNotEmpty()) {
+                Log.d("Listening", "EMPEZAR A PROCESAR")
+                val note = processText(text, tables)
+                tablesViewModel.addNote(note)
+            }
+        }
         Scaffold(
-            //contentWindowInsets = WindowInsets.safeDrawing,
             contentWindowInsets = WindowInsets(0),
             topBar = {
                 TopScrollableTab(
@@ -99,9 +111,6 @@ class MainActivity : ComponentActivity() {
                     onRecordStop = {audioViewModel.stopRecording()},
                     onRightClick = {Log.d("---------------", "right")}, //canlendar function
                     modifier = Modifier
-
-                        //.background(MaterialTheme.colorScheme.surface)
-
                 )
             }
 
@@ -122,3 +131,17 @@ class MainActivity : ComponentActivity() {
 
     }
 
+suspend fun processText(input: String, tables: List<NoteTable>) : Note {
+    val chatGptManager = ChatGptManager
+    val response = chatGptManager.request(input, tables)
+    Log.d("txt", response.summary)
+    return Note(
+        null,
+        response.title,
+        input,
+        response.summary,
+        response.fields,
+        response.tableId,
+        response.timestamp,
+    )
+}
