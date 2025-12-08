@@ -27,20 +27,25 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.chatGpt.ChatGptManager
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
+import com.example.easynote.ui.components.SuccessToast
 import com.example.easynote.viewmodels.TablesViewModel
+import kotlinx.coroutines.delay
 
 
 class MainActivity : ComponentActivity() {
@@ -81,19 +86,24 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(Unit) {
             audioViewModel.configure(context)
         }
-        audioViewModel.configure(context)
         val text by audioViewModel.text.collectAsState()
         val isListening by audioViewModel.isListening.collectAsState()
         var selectedTab by remember { mutableIntStateOf(0) }
         val tables by tablesViewModel.tables.collectAsState()
+
+        var showSuccess by remember { mutableStateOf(false) }
 
         LaunchedEffect(text) {
             if (!isListening && text.isNotEmpty()) {
                 Log.d("Listening", "EMPEZAR A PROCESAR")
                 val note = processText(text, tables)
                 tablesViewModel.addNote(note)
+                showSuccess = true
+                delay(1500)
+                showSuccess = false
             }
         }
+
         Scaffold(
             contentWindowInsets = WindowInsets(0),
             topBar = {
@@ -114,18 +124,22 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-        ) { innerPadding ->
-            Column(
+        )  { innerPadding ->
+
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // El contenido ocupa el espacio disponible
-                Text(text)
-                ContentCard(selectedTab)
 
-                // Espacio para que el FAB no tape el contenido
-                //Spacer(modifier = Modifier.height(40.dp))
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text)
+                    ContentCard(selectedTab)
+                }
+
+                SuccessToast("Nota agregada!",show = showSuccess)
             }
         }
 
