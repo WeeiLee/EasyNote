@@ -48,6 +48,13 @@ object DatabaseManager {
             list.map { createNoteFromEntity(it) }
         }
 
+    fun getNoteById(noteId: Int): Flow<Note?> =
+        database.noteDao()
+            .getNoteById(noteId)
+            .map { entity ->
+                entity?.let { createNoteFromEntity(it) }
+            }
+
     fun getNotesByTableID(id: Int): Flow<List<Note>> =
         database.noteDao()
             .getNotesByTableId(id)

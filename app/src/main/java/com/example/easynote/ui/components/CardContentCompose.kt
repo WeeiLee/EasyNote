@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.easynote.R
@@ -32,10 +31,16 @@ import com.example.easynote.models.Note
 
 @Composable
 fun InfoImageCard(
-    note: Note,
-    image: Painter,
+    note: Note?,
     onDeleteClick: (Int) -> Unit
 ) {
+    val image: Painter = when (note?.noteTableId) {
+        0 -> painterResource(R.drawable.event)
+        1 -> painterResource(R.drawable.clock)
+        2 -> painterResource(R.drawable.weight)
+        3 -> painterResource(R.drawable.spending)
+        else -> painterResource(R.drawable.other)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +51,7 @@ fun InfoImageCard(
 
         Column {
 
-            // ---------- IMAGEN ARRIBA ----------
+            // Cuadro de la imagen
             Image(
                 painter = image,
                 contentDescription = null,
@@ -56,7 +61,7 @@ fun InfoImageCard(
                     .height(180.dp)
             )
 
-            // ---------- CONTENIDO ----------
+            // Contenido de la tarjeta
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,7 +77,7 @@ fun InfoImageCard(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = note.title,
+                            text = note?.title ?: "",
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -80,7 +85,7 @@ fun InfoImageCard(
                         Spacer(Modifier.height(4.dp))
 
                         Text(
-                            text = note.originalContent,
+                            text = note?.originalContent ?: "",
                             fontSize = 14.sp,
                             color = Color(0xFF444444)
                         )
@@ -88,14 +93,14 @@ fun InfoImageCard(
                         Spacer(Modifier.height(8.dp))
 
                         Text(
-                            text = note.timestamp,
+                            text = note?.timestamp ?: "",
                             fontSize = 13.sp,
                             color = Color.Gray
                         )
                     }
 
-                    // ---------- BOTÓN ELIMINAR ----------
-                    IconButton(onClick = {onDeleteClick(note.id)}) {
+                    //Botón de eliminar
+                    IconButton(onClick = {onDeleteClick(note?.id ?: 0)}) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Eliminar",

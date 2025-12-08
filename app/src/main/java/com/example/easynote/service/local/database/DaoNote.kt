@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.easynote.models.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,6 +21,8 @@ interface DaoNote {
     @Query("DELETE FROM Notes WHERE noteTableId = :tableId")
     suspend fun deleteNotesByTableId(tableId: Int)
 
+    @Query("SELECT * FROM Notes WHERE id = :noteId")
+    fun getNoteById(noteId: Int) : Flow<Notes?>
     @Insert
     suspend fun insertNote(note: Notes): Long
 

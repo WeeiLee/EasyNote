@@ -11,11 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.easynote.viewmodels.NotesViewModel
 import com.example.easynote.viewmodels.NotesViewModelFactory
 
 @Composable
-fun NoteListScreen(tableId: Int) {
+fun NoteListScreen(
+    tableId: Int,
+    navController: NavHostController,
+    ) {
     val factory = remember { NotesViewModelFactory(tableId) }
     val vm: NotesViewModel = viewModel(
         key = "NotesVM_$tableId",
@@ -32,9 +36,7 @@ fun NoteListScreen(tableId: Int) {
         items(notes) { item ->
             NoteItem(
                 note = item,
-                onDeleteClick = {
-                    //todo
-                }
+                navController
             )
             NoteDivider()
         }

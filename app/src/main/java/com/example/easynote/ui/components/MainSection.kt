@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.example.easynote.R
 import com.example.easynote.models.Note
 
@@ -45,7 +46,7 @@ fun HomeCompose() {
 @Composable
 fun ContentCard(
     index: Int,
-    modifier: Modifier = Modifier
+    navController: NavHostController,
 ) {
     Box(
         modifier = Modifier
@@ -55,11 +56,11 @@ fun ContentCard(
     ) {
         when (index) {
             0 -> HomeCompose()
-            1 -> NoteListScreen(0)
-            2 -> NoteListScreen(1)
-            3 -> NoteListScreen(2)
-            4 -> NoteListScreen(3)
-            5 -> NoteListScreen(4)
+            1 -> NoteListScreen(0, navController)
+            2 -> NoteListScreen(1, navController)
+            3 -> NoteListScreen(2, navController)
+            4 -> NoteListScreen(3, navController)
+            5 -> NoteListScreen(4, navController)
         }
     }
 }

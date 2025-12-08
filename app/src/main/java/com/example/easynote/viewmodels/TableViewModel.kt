@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.database.DatabaseManager
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -37,4 +39,17 @@ class TablesViewModel : ViewModel() {
             DatabaseManager.addNote(note)
         }
     }
+
+    fun deleteNote(id: Int) {
+        viewModelScope.launch {
+            DatabaseManager.deleteNote(id)
+        }
+    }
+
+    fun getNote(id: Int): Flow<Note?> {
+        return DatabaseManager.getNoteById(id)
+    }
+
+
+
 }

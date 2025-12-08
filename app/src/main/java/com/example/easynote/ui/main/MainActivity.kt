@@ -26,23 +26,21 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.chatGpt.ChatGptManager
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
+import com.example.easynote.ui.components.DetailScreen
 import com.example.easynote.ui.components.SuccessToast
 import com.example.easynote.viewmodels.TablesViewModel
 import kotlinx.coroutines.delay
@@ -70,14 +68,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             EasyNoteTheme {
                 Log.d("TEST", "ON START EJECUTADO")
-                test()
+                AppNavigation()
             }
         }
     }
     }
 
     @Composable
-    fun test(){
+    fun test(navController: NavHostController) {
         val context = LocalContext.current
 
         val audioViewModel: AudioViewModel = viewModel()
@@ -136,7 +134,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(text)
-                    ContentCard(selectedTab)
+                    ContentCard(
+                        selectedTab,
+                        navController
+                        )
                 }
 
                 SuccessToast("Nota agregada!",show = showSuccess)
@@ -159,3 +160,20 @@ suspend fun processText(input: String, tables: List<NoteTable>) : Note {
         response.timestamp,
     )
 }
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+        composable("home") { test(navController) }
+        composable("detail/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
+            DetailScreen(navController, id)
+        }
+    }
+}
+
