@@ -22,6 +22,14 @@ class TablesViewModel : ViewModel() {
                 emptyList()
             )
 
+    val notes: StateFlow<List<Note>> =
+        DatabaseManager.getAllNotes()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
     fun createTable(table: NoteTable) {
         viewModelScope.launch {
             DatabaseManager.createTable(table)

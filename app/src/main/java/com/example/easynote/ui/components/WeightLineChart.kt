@@ -63,20 +63,14 @@ fun LineChart() {
             .padding(16.dp)
     )
 }
-//@Preview
-@Composable
-fun pre() {
-    val entries = mapOf(
-        "Comida" to 250f,
-        "Transporte" to 90f,
-        "Compras" to 120f,
-        "Otros" to 40f
-    )
-    PieChart(entries)
-}
+
+
 
 @Composable
-fun PieChart(data: Map<String, Float>) {
+fun PieChart(
+    data: Map<String, Float>,
+    modifier: Modifier
+    ) {
 
     AndroidView(
         modifier = Modifier

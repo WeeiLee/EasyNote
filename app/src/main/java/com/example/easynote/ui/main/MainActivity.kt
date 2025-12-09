@@ -40,6 +40,7 @@ import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.chatGpt.ChatGptManager
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
+import com.example.easynote.ui.components.ChartViewer
 import com.example.easynote.ui.components.DetailScreen
 import com.example.easynote.ui.components.SuccessToast
 import com.example.easynote.viewmodels.TablesViewModel
@@ -116,6 +117,7 @@ class MainActivity : ComponentActivity() {
                         audioViewModel.startRecording(context)
                         Log.d("---------------", text)},
                     onRecordStop = {audioViewModel.stopRecording()},
+                    onLeftClick = {navController.navigate("pieChart")},
                     onRightClick = {Log.d("---------------", "right")}, //canlendar function
                     modifier = Modifier
                 )
@@ -174,6 +176,7 @@ fun AppNavigation() {
             val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
             DetailScreen(navController, id)
         }
+        composable("pieChart") { ChartViewer(3, navController) }
     }
 }
 
