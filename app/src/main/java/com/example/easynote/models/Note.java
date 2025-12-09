@@ -50,4 +50,12 @@ public class Note {
     }
 
     public Integer getNoteTableId(){ return this.noteTableId; }
+
+    private String extractDate(String date) {
+        String partialDate = date.substring(0, 10);
+        String partialHour = date.substring(11, 19);
+        return partialDate + " " + partialHour;
+    }
+
+
 }

@@ -20,7 +20,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 
 @Composable
-fun SimpleMPLineChart() {
+fun LineChart() {
     AndroidView(
         factory = { context ->
             LineChart(context).apply {
@@ -63,7 +63,7 @@ fun SimpleMPLineChart() {
             .padding(16.dp)
     )
 }
-@Preview
+//@Preview
 @Composable
 fun pre() {
     val entries = mapOf(
@@ -72,11 +72,11 @@ fun pre() {
         "Compras" to 120f,
         "Otros" to 40f
     )
-    ElegantPieChart(entries)
+    PieChart(entries)
 }
 
 @Composable
-fun ElegantPieChart(data: Map<String, Float>) {
+fun PieChart(data: Map<String, Float>) {
 
     AndroidView(
         modifier = Modifier

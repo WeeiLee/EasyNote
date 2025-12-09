@@ -141,6 +141,7 @@ object DatabaseManager {
         eventTypes["Título"] = FieldType.TEXT
         eventTypes["Fecha"] = FieldType.TIME
         eventTypes["Notas"] = FieldType.TEXT
+        eventTypes["Lugar"] = FieldType.TEXT
         eventTypes["Recordatorio activado"] = FieldType.EVENT
 
         val eventTable = NoteTable(
