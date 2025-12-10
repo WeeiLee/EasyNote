@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
     <application
         android:name=".EasyNoteApp"
         android:allowBackup="true"
@@ -22,9 +25,20 @@
             android:theme="@style/Theme.EasyNote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.event.EventCreatorActivity"
+            android:label="Crear Evento"
+            android:theme="@style/Theme.EasyNote" />
+        <activity
+            android:name=".ui.event.AlarmActivity"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"            
+            android:theme="@style/Theme.EasyNote" />
+
+        <receiver android:name=".service.reminder.EventReminderReceiver" android:enabled="true" />
+
     </application>
 </manifest>

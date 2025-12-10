@@ -25,19 +25,7 @@ object DatabaseManager {
                 context.applicationContext,
                 DaoDatabase::class.java,
                 "easy_note_database"
-            ).addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    Log.d("DB", "Database initialized")
-                    super.onCreate(db)
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        insertDefaultTable()
-                        Log.d("DB", "insert for default")
-
-                    }
-                }
-            })
-                .fallbackToDestructiveMigration()
+            )
                 .build()
         }
     }
@@ -229,5 +217,39 @@ object DatabaseManager {
             "12-01-11",
         )
         this.addNote(note2)
+    }
+
+    suspend fun saveEvent(title: String, description: String, timestamp: Long, location: String?): Long {
+        val event = EventEntity(
+            title = title,
+            description = description,
+            timestamp = timestamp,
+            location = location
+        )
+        return database.daoEvent().insert(event)
+    }
+    
+    suspend fun updateEvent(event: EventEntity) {
+        database.daoEvent().update(event)
+    }
+
+    suspend fun deleteEvent(event: EventEntity) {
+        database.daoEvent().delete(event)
+    }
+
+    suspend fun deleteEventById(id: Int) {
+        database.daoEvent().deleteById(id)
+    }
+
+    suspend fun getAllEvents(): List<EventEntity> {
+        return database.daoEvent().getAllEvents()
+    }
+
+    suspend fun getEventsForDay(start: Long, end: Long): List<EventEntity> {
+        return database.daoEvent().getEventsBetween(start, end)
+    }
+
+    suspend fun getEventById(id: Int): EventEntity? {
+        return database.daoEvent().getById(id)
     }
 }
