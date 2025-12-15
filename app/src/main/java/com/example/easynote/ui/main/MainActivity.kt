@@ -40,6 +40,7 @@ import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.chatGpt.ChatGptManager
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
+import com.example.easynote.ui.components.CalendarViewer
 import com.example.easynote.ui.components.ChartViewer
 import com.example.easynote.ui.components.DetailScreen
 import com.example.easynote.ui.components.SuccessToast
@@ -118,7 +119,7 @@ class MainActivity : ComponentActivity() {
                         Log.d("---------------", text)},
                     onRecordStop = {audioViewModel.stopRecording()},
                     onLeftClick = {navController.navigate("pieChart")},
-                    onRightClick = {Log.d("---------------", "right")}, //canlendar function
+                    onRightClick = {navController.navigate("calendar")}, //canlendar function
                     modifier = Modifier
                 )
             }
@@ -151,7 +152,7 @@ class MainActivity : ComponentActivity() {
 suspend fun processText(input: String, tables: List<NoteTable>) : Note {
     val chatGptManager = ChatGptManager
     val response = chatGptManager.request(input, tables)
-    Log.d("txt", response.summary)
+    Log.d("txt", response.fields.toString())
     return Note(
         null,
         response.title,
@@ -177,6 +178,7 @@ fun AppNavigation() {
             DetailScreen(navController, id)
         }
         composable("pieChart") { ChartViewer(3, navController) }
+        composable("calendar") { CalendarViewer(0, navController) }
     }
 }
 

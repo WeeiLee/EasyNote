@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -99,4 +100,5 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("com.airbnb.android:lottie-compose:6.3.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.kizitonwose.calendar:compose:2.6.0")
 }
