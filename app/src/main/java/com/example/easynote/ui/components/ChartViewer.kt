@@ -17,21 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.easynote.viewmodels.NotesViewModel
-import com.example.easynote.viewmodels.NotesViewModelFactory
 import com.example.easynote.viewmodels.TablesViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun ChartViewer(
@@ -65,9 +57,13 @@ fun ChartViewer(
             val chartData = notes
                 .filter { it.noteTableId == expenseId }
                 .associate { note ->
-                    val categoria = note.fields["Categoría"]?.toString().orEmpty()
-                    val cantidad = note.fields["Cantidad"]?.toString()?.toFloatOrNull() ?: 0f
-                    categoria to cantidad
+                    val category = note.fields["Categoría"]
+                        ?.toString()
+                        ?.lowercase()
+                        .orEmpty()
+
+                    val amount = note.fields["Cantidad"]?.toString()?.toFloatOrNull() ?: 0f
+                    category to amount
                 }
 
             Card(
