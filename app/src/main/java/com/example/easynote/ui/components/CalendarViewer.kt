@@ -40,7 +40,7 @@ fun CalendarViewer(
     navController: NavHostController
 ) {
     val notesViewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory(tableId))
-    val notes by notesViewModel.notes.collectAsState()
+    val events by notesViewModel.events.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -67,16 +67,6 @@ fun CalendarViewer(
                 .padding(6.dp)
         ) {
 
-            val eventData = notes.map { note ->
-                CalendarEvent(
-                    id = note.id,
-                    title = note.title,
-                    description = note.summary,
-                    date = convertToLocalDate(note)
-                )
-            }
-
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,7 +81,7 @@ fun CalendarViewer(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    CalendarScreen(eventData)
+                    CalendarScreen(events)
                 }
             }
 
@@ -99,18 +89,4 @@ fun CalendarViewer(
     }
 }
 
-fun convertToLocalDate(note: Note): LocalDate {
-    val dateField = note.fields["Fecha"]?.toString()?.trim()
-    return try {
-        when {
-            dateField.isNullOrEmpty() -> {
-                LocalDateTime.parse(note.timestamp).toLocalDate()
-            }
-            else -> {
-                LocalDate.parse(dateField)
-            }
-        }
-    } catch (e: Exception) {
-        LocalDate.now()
-    }
-}
+

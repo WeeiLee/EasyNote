@@ -92,7 +92,7 @@ fun CalendarScreen(
         val first = currentMonth.atDay(1)
         val last = currentMonth.atEndOfMonth()
 
-        val startOffset = (first.dayOfWeek.value % 7)
+        val startOffset = first.dayOfWeek.value - 1
         var dayNumber = 1 - startOffset
 
         Column {

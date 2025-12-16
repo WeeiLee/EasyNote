@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,14 +90,14 @@ class MainActivity : ComponentActivity() {
         val isListening by audioViewModel.isListening.collectAsState()
         var selectedTab by remember { mutableIntStateOf(0) }
         val tables by tablesViewModel.tables.collectAsState()
-
         var showSuccess by remember { mutableStateOf(false) }
 
-        LaunchedEffect(text) {
-            if (!isListening && text.isNotEmpty()) {
+        LaunchedEffect(text, isListening) {
+            if (!isListening && text.isNotEmpty() && text != audioViewModel.lastProcessedText) {
                 Log.d("Listening", "EMPEZAR A PROCESAR")
                 val note = processText(text, tables)
                 tablesViewModel.addNote(note)
+                audioViewModel.lastProcessedText = text
                 showSuccess = true
                 delay(1500)
                 showSuccess = false

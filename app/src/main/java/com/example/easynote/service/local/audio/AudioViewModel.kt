@@ -14,6 +14,7 @@ class AudioViewModel(
 ) : ViewModel() {
 
     private val _text = MutableStateFlow("")
+    var lastProcessedText: String? = null
     val text = _text.asStateFlow()
 
     private val _isListening = MutableStateFlow(false)
