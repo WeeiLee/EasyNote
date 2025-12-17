@@ -1,6 +1,5 @@
 package com.example.easynote.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.easynote.models.Note
 
 @Composable
@@ -25,7 +23,7 @@ fun NoteItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {onClick(note.id)}
+            .clickable { onClick(note.id) }
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         // Title
@@ -44,10 +42,18 @@ fun NoteItem(
         // time
         Spacer(modifier = Modifier.height(6.dp))
         Text(
-            text = note.timestamp,
+            text = extractDate(note.timestamp),
             style = MaterialTheme.typography.labelSmall,
             color = Color.Gray.copy(alpha = 0.6f)
         )
     }
 }
 
+fun extractDate(date: String): String {
+    if (date.contains("T")) {
+        val partialDate = date.take(10)
+        val partialHour = date.substring(11, 19)
+        return "$partialDate $partialHour"
+    }
+    return date
+}

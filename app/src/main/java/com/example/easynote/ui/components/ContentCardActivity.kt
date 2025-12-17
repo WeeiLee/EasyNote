@@ -45,7 +45,7 @@ fun DetailScreen(
 
                         showSuccess = true
                         scope.launch {
-                            delay(1200)
+                            delay(500)
                             navController.popBackStack()
                         }
                     }

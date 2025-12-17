@@ -12,7 +12,7 @@ interface DaoNote {
     @Query("SELECT * FROM Notes")
     fun getNotes(): Flow<List<Notes>>
 
-    @Query("SELECT * FROM Notes WHERE noteTableId = :tableId")
+    @Query("SELECT * FROM Notes WHERE noteTableId = :tableId ORDER BY timestamp DESC")
     fun getNotesByTableId(tableId: Int): Flow<List<Notes>>
 
     @Query("DELETE FROM Notes WHERE id = :noteId")

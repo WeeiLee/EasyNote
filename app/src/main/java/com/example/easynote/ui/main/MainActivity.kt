@@ -1,4 +1,5 @@
 package com.example.easynote.ui.main
+import NotesSearchWithResults
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,17 +23,25 @@ import com.example.easynote.ui.components.TopScrollableTab
 import com.example.easynote.ui.components.ContentCard
 import com.example.easynote.ui.theme.EasyNoteTheme
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.SystemClock
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.SearchBar
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,15 +54,18 @@ import com.example.easynote.ui.components.CalendarViewer
 import com.example.easynote.ui.components.ChartViewer
 import com.example.easynote.ui.components.DetailScreen
 import com.example.easynote.ui.components.SuccessToast
+import com.example.easynote.ui.components.setReminder
 import com.example.easynote.viewmodels.TablesViewModel
 import kotlinx.coroutines.delay
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     private val RECORD_AUDIO_REQUEST = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DatabaseManager.initialize(applicationContext) // Initialize database
-
+        createEventChannel(this)
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.RECORD_AUDIO
@@ -63,6 +75,13 @@ class MainActivity : ComponentActivity() {
                 this,
                 arrayOf(Manifest.permission.RECORD_AUDIO),
                 RECORD_AUDIO_REQUEST
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                1001
             )
         }
 
@@ -77,7 +96,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun test(navController: NavHostController) {
+    fun MenuScreen(navController: NavHostController) {
         val context = LocalContext.current
 
         val audioViewModel: AudioViewModel = viewModel()
@@ -88,21 +107,57 @@ class MainActivity : ComponentActivity() {
         }
         val text by audioViewModel.text.collectAsState()
         val isListening by audioViewModel.isListening.collectAsState()
-        var selectedTab by remember { mutableIntStateOf(0) }
+        var selectedTab by rememberSaveable { mutableIntStateOf(0) }
         val tables by tablesViewModel.tables.collectAsState()
+        val notes by tablesViewModel.notes.collectAsState()
         var showSuccess by remember { mutableStateOf(false) }
+        var message by remember { mutableStateOf("") }
+        var isSuccess by remember { mutableStateOf(true) }
+        var startTime by remember { mutableLongStateOf(0L) }
+        var isValidRecording by remember { mutableStateOf(true) }
 
-        LaunchedEffect(text, isListening) {
-            if (!isListening && text.isNotEmpty() && text != audioViewModel.lastProcessedText) {
-                Log.d("Listening", "EMPEZAR A PROCESAR")
-                val note = processText(text, tables)
-                tablesViewModel.addNote(note)
-                audioViewModel.lastProcessedText = text
-                showSuccess = true
-                delay(1500)
-                showSuccess = false
+
+
+        LaunchedEffect(isListening) {
+            if (!isListening && startTime != 0L) {
+                val duration = SystemClock.elapsedRealtime() - startTime
+
+                if (duration < 1500) {
+                    message = "Mensaje demasiado corto"
+                    isSuccess = false
+                    isValidRecording = false
+                    showSuccess = true
+                    delay(1500)
+                    showSuccess = false
+                    return@LaunchedEffect
+                }
             }
         }
+
+
+        LaunchedEffect(text, isListening) {
+            if (!isListening &&
+                text.isNotEmpty() &&
+                text != audioViewModel.lastProcessedText &&
+                isValidRecording
+            ) {
+                val duration = SystemClock.elapsedRealtime() - startTime
+                if (duration < 1500) return@LaunchedEffect
+                Log.d("texto a procesar", "TEXTO: $text")
+                message = "Generando su nota..."
+                isSuccess = true
+                showSuccess = true
+                delay(1000)
+                showSuccess = false
+
+                val note = processText(text, tables)
+                tablesViewModel.addNote(note)
+                setNotification(context, note)
+
+                audioViewModel.lastProcessedText = text
+            }
+        }
+
 
         Scaffold(
             contentWindowInsets = WindowInsets(0),
@@ -116,9 +171,12 @@ class MainActivity : ComponentActivity() {
             bottomBar = {
                 BottomBarWithHoldRecord(
                     onRecordStart = {
-                        audioViewModel.startRecording(context)
-                        Log.d("---------------", text)},
-                    onRecordStop = {audioViewModel.stopRecording()},
+                        isValidRecording = true
+                        startTime = SystemClock.elapsedRealtime()
+                        audioViewModel.startRecording(context) },
+                    onRecordStop = {
+                        Log.d("stop----", "stop")
+                        audioViewModel.stopRecording() },
                     onLeftClick = {navController.navigate("pieChart")},
                     onRightClick = {navController.navigate("calendar")}, //canlendar function
                     modifier = Modifier
@@ -136,7 +194,15 @@ class MainActivity : ComponentActivity() {
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Text(text)
+                    NotesSearchWithResults(
+                        notes = notes,
+                        onNoteSelected = { note ->
+                            // todo
+                            Log.d("SEARCH", "Seleccionada: ${note.title}")
+                        },
+                        modifier = Modifier.padding(8.dp)
+                    )
+
                     ContentCard(
                         selectedTab,
                         isListening,
@@ -144,7 +210,7 @@ class MainActivity : ComponentActivity() {
                         )
                 }
 
-                SuccessToast("Nota agregada!",show = showSuccess)
+                SuccessToast(message,show = showSuccess, success = isSuccess)
             }
         }
 
@@ -173,7 +239,7 @@ fun AppNavigation() {
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home") { test(navController) }
+        composable("home") { MenuScreen(navController) }
         composable("detail/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
             DetailScreen(navController, id)
@@ -183,3 +249,36 @@ fun AppNavigation() {
     }
 }
 
+fun createEventChannel(context: Context) {
+    val channel = NotificationChannel(
+        "event_channel",
+        "Recordatorios de eventos",
+        NotificationManager.IMPORTANCE_HIGH
+    ).apply {
+        description = "Notificaciones de eventos del calendario"
+    }
+
+    val manager = context.getSystemService(NotificationManager::class.java)
+    manager.createNotificationChannel(channel)
+}
+
+fun setNotification(context: Context, note: Note, eventTableId: Int = 0) {
+    if (note.noteTableId == eventTableId) {
+
+        val date = note.fields["Fecha"]
+            ?.toString()
+            ?.trim()
+            ?.let {
+                try {
+                    when {
+                        it.contains("T") -> LocalDateTime.parse(it).toLocalDate()
+                        else -> LocalDate.parse(it)
+                    }
+                } catch (e: Exception) {
+                    LocalDate.now()
+                }
+            } ?: LocalDate.now()
+
+        setReminder(context, date, note.title, note.summary)
+    }
+}

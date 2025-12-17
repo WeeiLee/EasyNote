@@ -93,7 +93,9 @@ fun InfoImageCard(
                         Spacer(Modifier.height(8.dp))
 
                         Text(
-                            text = note?.timestamp ?: "",
+                            text = note?.timestamp
+                                ?.let { extractDate(it) }
+                                ?: "",
                             fontSize = 13.sp,
                             color = Color.Gray
                         )

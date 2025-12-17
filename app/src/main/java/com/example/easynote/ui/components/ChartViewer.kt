@@ -23,7 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.easynote.models.Note
 import com.example.easynote.viewmodels.TablesViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun ChartViewer(
@@ -31,6 +34,7 @@ fun ChartViewer(
     navController: NavHostController
 ) {
     val expenseId: Int = 3
+    val weightId: Int = 2
     val tablesViewModel: TablesViewModel = viewModel()
     val notes by tablesViewModel.notes.collectAsState()
 
@@ -54,17 +58,10 @@ fun ChartViewer(
                 return@Column
             }
 
-            val chartData = notes
-                .filter { it.noteTableId == expenseId }
-                .associate { note ->
-                    val category = note.fields["Categoría"]
-                        ?.toString()
-                        ?.lowercase()
-                        .orEmpty()
+            val pieChartData = processPieChartData(notes, expenseId)
 
-                    val amount = note.fields["Cantidad"]?.toString()?.toFloatOrNull() ?: 0f
-                    category to amount
-                }
+            val lineChartData = processLineChartData(notes, weightId)
+
 
             Card(
                 modifier = Modifier
@@ -85,9 +82,12 @@ fun ChartViewer(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     PieChart(
-                        data = chartData,
+                        data = pieChartData,
                         modifier = Modifier.size(280.dp)
                     )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LineChart(lineChartData)
                 }
             }
 
@@ -111,4 +111,51 @@ fun EmptyStateMessage() {
             color = Color.Gray
         )
     }
+}
+
+fun processPieChartData(notes: List<Note>, expenseId: Int): Map<String, Float> {
+    return notes
+        .filter { it.noteTableId == expenseId }
+        .associate { note ->
+            val category = note.fields["Categoría"]
+                ?.toString()
+                ?.lowercase()
+                .orEmpty()
+
+            val amount = note.fields["Cantidad"]?.toString()?.toFloatOrNull() ?: 0f
+            category to amount
+        }
+}
+
+fun processLineChartData(notes: List<Note>, weightId: Int): Map<LocalDate, Float> {
+    return notes
+        .filter { it.noteTableId == weightId }
+        .mapNotNull { note ->
+
+            val date = note.fields["Fecha"]
+                ?.toString()
+                ?.let {
+                    try {
+                        when {
+                            it.contains("T") -> LocalDateTime.parse(it).toLocalDate()
+                            else -> LocalDate.parse(it)
+                        }
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
+            val weight = note.fields["Peso (kg)"]
+                ?.toString()
+                ?.toFloatOrNull()
+
+            if (date != null && weight != null) {
+                date to weight
+            } else {
+                null
+            }
+        }
+        .toMap()
+
+
 }

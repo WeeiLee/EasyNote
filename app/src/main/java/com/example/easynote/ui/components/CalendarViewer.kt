@@ -1,14 +1,10 @@
 package com.example.easynote.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -42,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,6 +50,7 @@ import java.time.ZoneId
 import java.time.LocalDate
 import java.time.Instant
 import androidx.compose.ui.window.Dialog
+import com.example.easynote.service.local.reminder.ReminderManager
 
 @Composable
 fun CalendarViewer(
@@ -62,6 +60,7 @@ fun CalendarViewer(
     val notesViewModel: NotesViewModel = viewModel(factory = NotesViewModelFactory(tableId))
     val events by notesViewModel.events.collectAsState()
     var showAddEvent by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -121,8 +120,8 @@ fun CalendarViewer(
                             0,
                             LocalDate.now().toString()
                         )
-
                         notesViewModel.addNote(note)
+                        setReminder(context, date, title, description)
                         showAddEvent = false
                     }
                 )
@@ -240,4 +239,22 @@ fun AddEventFloatingCard(
             DatePicker(state = datePickerState)
         }
     }
+}
+
+fun setReminder(context: Context, date: LocalDate, title: String, description: String, hour: Int = 8) {
+    //para probar rápido con 10 min
+    //val triggerTime = System.currentTimeMillis() + 10_000
+    val triggerTime =
+        date.atStartOfDay(ZoneId.systemDefault())
+            .withHour(hour)
+            .toInstant()
+            .toEpochMilli()
+
+    ReminderManager.scheduleExactReminder(
+        context = context,
+        title = title,
+        message = description,
+        time = triggerTime,
+        System.currentTimeMillis().toInt()
+    )
 }

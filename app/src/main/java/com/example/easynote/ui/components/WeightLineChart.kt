@@ -12,49 +12,61 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun LineChart() {
+fun LineChart(entries: Map<LocalDate, Float>) {
     AndroidView(
         factory = { context ->
+
+            val sorted = entries.toSortedMap().values.toList()
+
+            val chartEntries = sorted.mapIndexed { index, value ->
+                Entry(index.toFloat(), value)
+            }
+
             LineChart(context).apply {
 
-                val entries = listOf(
-                    Entry(0f, 65f),
-                    Entry(1f, 66.5f),
-                    Entry(2f, 66f),
-                    Entry(3f, 64.8f),
-                    Entry(4f, 65.3f)
-                )
-
-                val dataSet = LineDataSet(entries, "Peso").apply {
+                val dataSet = LineDataSet(chartEntries, "Peso (kg)").apply {
                     mode = LineDataSet.Mode.CUBIC_BEZIER
-                    color = Color.Blue.hashCode()
+                    color = android.graphics.Color.BLUE
                     lineWidth = 3f
 
                     setDrawCircles(true)
-                    setCircleColor(Color.Blue.hashCode())
                     circleRadius = 4f
+                    setDrawValues(false)
 
                     setDrawFilled(true)
-                    fillColor = Color.Blue.hashCode()
-                    fillAlpha = 60
-
-                    setDrawValues(false)
+                    fillAlpha = 40
+                    fillColor = android.graphics.Color.BLUE
                 }
 
-                this.data = LineData(dataSet)
-                this.description.isEnabled = false
-                this.axisRight.isEnabled = false
-                this.xAxis.position = XAxis.XAxisPosition.BOTTOM
+                data = LineData(dataSet)
 
-                this.animateX(750)
+                description.isEnabled = false
+                axisRight.isEnabled = false
+
+                xAxis.apply {
+                    setDrawLabels(false)
+                    setDrawGridLines(false)
+                }
+
+                axisLeft.apply {
+                    setDrawGridLines(true)
+                }
+
+                setTouchEnabled(true)
+                isDragEnabled = true
+                setScaleEnabled(false)
+
+                animateX(600)
             }
         },
         modifier = Modifier

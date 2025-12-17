@@ -48,8 +48,16 @@ class AudioViewModel(
             }
 
             override fun onError(error: Int) {
-                _text.value = "Error: $error"
-                _isListening.value = false
+                when (error) {
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT,
+                    SpeechRecognizer.ERROR_NO_MATCH -> {
+                        _isListening.value = false
+                        return
+                    }
+                    else -> {
+                        _isListening.value = false
+                    }
+                }
             }
 
             override fun onReadyForSpeech(params: Bundle?) {}
