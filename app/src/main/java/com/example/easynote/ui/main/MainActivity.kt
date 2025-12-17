@@ -59,6 +59,7 @@ import com.example.easynote.viewmodels.TablesViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class MainActivity : ComponentActivity() {
     private val RECORD_AUDIO_REQUEST = 100
@@ -153,7 +154,10 @@ class MainActivity : ComponentActivity() {
                 val note = processText(text, tables)
                 tablesViewModel.addNote(note)
                 setNotification(context, note)
-
+                message = "Nota agregada correctamente"
+                showSuccess = true
+                delay(1500)
+                showSuccess = false
                 audioViewModel.lastProcessedText = text
             }
         }
@@ -197,7 +201,7 @@ class MainActivity : ComponentActivity() {
                     NotesSearchWithResults(
                         notes = notes,
                         onNoteSelected = { note ->
-                            // todo
+                            navController.navigate("detail/${note.id}")
                             Log.d("SEARCH", "Seleccionada: ${note.title}")
                         },
                         modifier = Modifier.padding(8.dp)
@@ -262,7 +266,9 @@ fun createEventChannel(context: Context) {
     manager.createNotificationChannel(channel)
 }
 
-fun setNotification(context: Context, note: Note, eventTableId: Int = 0) {
+fun setNotification(context: Context, note: Note) {
+    val eventTableId = 0
+    val clockTableId = 1
     if (note.noteTableId == eventTableId) {
 
         val date = note.fields["Fecha"]
@@ -280,5 +286,29 @@ fun setNotification(context: Context, note: Note, eventTableId: Int = 0) {
             } ?: LocalDate.now()
 
         setReminder(context, date, note.title, note.summary)
+    }
+    else if (note.noteTableId == clockTableId) {
+
+        val rawTime = note.fields["Hora"]
+            ?.toString()
+            ?.trim()
+
+        if (rawTime.isNullOrEmpty()) return
+
+        try {
+            val dateTime = LocalDateTime.parse(rawTime)
+
+            setReminder(
+                context = context,
+                date = dateTime.toLocalDate(),
+                title = note.title,
+                description = note.summary,
+                hour = dateTime.hour,
+                minute = dateTime.minute
+            )
+
+        } catch (e: Exception) {
+            Log.e("Reminder", "Hora inválida: $rawTime")
+        }
     }
 }

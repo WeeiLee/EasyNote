@@ -147,7 +147,7 @@ object DatabaseManager {
         val eventTable = NoteTable(
             0,
             "Eventos",
-            "Tabla diseñada para registrar eventos programados por el usuario. Incluye campos obligatorios para fecha, hora y título del evento, así como información adicional como ubicación, notas y opciones de recordatorio. Se utiliza para gestionar actividades, citas y recordatorios temporales que ocurren en un momento específico.",
+            "Tabla diseñada para registrar eventos programados por el usuario. Incluye campos obligatorios para fecha, hora y título del evento, así como información adicional como ubicación, notas y opciones de recordatorio. Se utiliza para gestionar actividades o citas.",
             eventTypes
         )
 
@@ -160,7 +160,7 @@ object DatabaseManager {
         val alarmTable = NoteTable(
             1,
             "Alarmas",
-            "Tabla diseñada para almacenar alarmas configuradas por el usuario. Incluye campos para la hora exacta, frecuencia de repetición, título descriptivo y opciones para activar o desactivar la alarma. Se utiliza para gestionar alarmas diarias, semanales o personalizadas que generan un aviso en un momento específico.",
+            "Tabla diseñada para almacenar alarmas configuradas por el usuario. Incluye campos para la hora exacta, sin fecha, título descriptivo. Se utiliza para gestionar alarmas o recordatorio personalizadas que generan un aviso en un momento específico.",
             alarmTypes
         )
 

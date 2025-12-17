@@ -1,12 +1,17 @@
 package com.example.easynote.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -89,6 +94,30 @@ fun InfoImageCard(
                             fontSize = 14.sp,
                             color = Color(0xFF444444)
                         )
+                        Spacer(Modifier.height(4.dp))
+
+                        val dateText = note?.fields
+                            ?.get("Fecha")
+                            ?.toString()
+                            ?: "no especificado"
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(Color(0xFF4CAF50), shape = CircleShape)
+                            )
+
+                            Spacer(modifier = Modifier.width(6.dp))
+
+                            Text(
+                                text = "Fecha: $dateText",
+                                fontSize = 14.sp,
+                                color = Color.DarkGray
+                            )
+                        }
 
                         Spacer(Modifier.height(8.dp))
 

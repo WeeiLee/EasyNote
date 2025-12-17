@@ -241,12 +241,13 @@ fun AddEventFloatingCard(
     }
 }
 
-fun setReminder(context: Context, date: LocalDate, title: String, description: String, hour: Int = 8) {
+fun setReminder(context: Context, date: LocalDate, title: String, description: String, hour: Int = 8, minute : Int = 0) {
     //para probar rápido con 10 min
     //val triggerTime = System.currentTimeMillis() + 10_000
     val triggerTime =
         date.atStartOfDay(ZoneId.systemDefault())
             .withHour(hour)
+            .withMinute(minute)
             .toInstant()
             .toEpochMilli()
 
