@@ -87,6 +87,10 @@ fun ChartViewer(
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Seguimiento de peso",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                     LineChart(lineChartData)
                 }
             }

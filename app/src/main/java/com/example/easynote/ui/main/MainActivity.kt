@@ -199,6 +199,7 @@ class MainActivity : ComponentActivity() {
                 BottomBarWithHoldRecord(
                     onRecordStart = {
                         isValidRecording = true
+                        selectedTab = 0
                         startTime = SystemClock.elapsedRealtime()
                         audioViewModel.startRecording(context) },
                     onRecordStop = {
