@@ -90,7 +90,7 @@ fun InfoImageCard(
                         Spacer(Modifier.height(4.dp))
 
                         Text(
-                            text = note?.originalContent ?: "",
+                            text = note?.summary ?: "",
                             fontSize = 14.sp,
                             color = Color(0xFF444444)
                         )

@@ -1,6 +1,7 @@
 package com.example.easynote.ui.components
 
 import android.icu.number.IntegerWidth
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,9 @@ import com.example.easynote.models.Note
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import com.airbnb.lottie.compose.*
 
@@ -67,27 +71,55 @@ fun DotLottieAnimationPlayer(isRecording: Boolean) {
         modifier = Modifier.size(200.dp)
     )
 }
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContentCard(
     index: Int,
+    onIndexChange: (Int) -> Unit,
     isListening: Boolean,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = Modifier
+    val pageCount = 6
+
+    val pagerState = rememberPagerState(
+        initialPage = index,
+        pageCount = { pageCount }
+    )
+
+    // 🔁 Swipe → index
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage != index) {
+            onIndexChange(pagerState.currentPage)
+        }
+    }
+
+    // 🔁 index → swipe (cuando cambias tab)
+    LaunchedEffect(index) {
+        if (index != pagerState.currentPage) {
+            pagerState.scrollToPage(index)
+        }
+    }
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier
+            .fillMaxWidth()
             .fillMaxHeight()
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        when (index) {
-            0 -> DotLottieAnimationPlayer(isListening)
-            1 -> NoteListScreen(0, navController)
-            2 -> NoteListScreen(1, navController)
-            3 -> NoteListScreen(2, navController)
-            4 -> NoteListScreen(3, navController)
-            5 -> NoteListScreen(4, navController)
+    ) { page ->
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (page) {
+                0 -> DotLottieAnimationPlayer(isListening)
+                1 -> NoteListScreen(0, navController)
+                2 -> NoteListScreen(1, navController)
+                3 -> NoteListScreen(2, navController)
+                4 -> NoteListScreen(3, navController)
+                5 -> NoteListScreen(4, navController)
+            }
         }
     }
 }
-

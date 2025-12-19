@@ -35,12 +35,14 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.SearchBar
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -57,6 +59,8 @@ import com.example.easynote.ui.components.SuccessToast
 import com.example.easynote.ui.components.setReminder
 import com.example.easynote.viewmodels.TablesViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -116,6 +120,25 @@ class MainActivity : ComponentActivity() {
         var isSuccess by remember { mutableStateOf(true) }
         var startTime by remember { mutableLongStateOf(0L) }
         var isValidRecording by remember { mutableStateOf(true) }
+        val pagerState = rememberPagerState(
+            initialPage = selectedTab,
+            pageCount = { tables.size}
+        )
+        LaunchedEffect(Unit) {
+            snapshotFlow { pagerState.settledPage }
+                .drop(1)
+                .distinctUntilChanged()
+                .collect { page ->
+                    if (page != selectedTab) selectedTab = page
+                }
+        }
+
+        LaunchedEffect(selectedTab) {
+            if (pagerState.currentPage != selectedTab) {
+                pagerState.scrollToPage(selectedTab)
+            }
+        }
+
 
 
 
@@ -208,10 +231,12 @@ class MainActivity : ComponentActivity() {
                     )
 
                     ContentCard(
-                        selectedTab,
-                        isListening,
-                        navController
-                        )
+                        index = selectedTab,
+                        onIndexChange = { selectedTab = it },
+                        isListening = isListening,
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
                 SuccessToast(message,show = showSuccess, success = isSuccess)

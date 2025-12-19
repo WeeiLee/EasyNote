@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.StickyNote2
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,7 +62,7 @@ fun BottomBarWithHoldRecord(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = onLeftClick) {
-                Icon(Icons.Default.StickyNote2, "Home")
+                Icon(Icons.Default.PieChart, "Gráfico")
             }
 
             // Botón de hold para grabar

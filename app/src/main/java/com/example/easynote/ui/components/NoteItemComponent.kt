@@ -35,7 +35,7 @@ fun NoteItem(
         // summary
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = note.summary,
+            text = note.originalContent,
             style = MaterialTheme.typography.bodySmall,
             color = Color.Gray
         )
