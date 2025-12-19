@@ -139,9 +139,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
-
-
         LaunchedEffect(isListening) {
             if (!isListening && startTime != 0L) {
                 val duration = SystemClock.elapsedRealtime() - startTime

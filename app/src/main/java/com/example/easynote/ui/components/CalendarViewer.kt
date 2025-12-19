@@ -2,9 +2,11 @@ package com.example.easynote.ui.components
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -31,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +54,8 @@ import java.time.LocalDate
 import java.time.Instant
 import androidx.compose.ui.window.Dialog
 import com.example.easynote.service.local.reminder.ReminderManager
+import kotlinx.coroutines.delay
+import java.time.LocalDateTime
 
 @Composable
 fun CalendarViewer(
@@ -61,6 +66,14 @@ fun CalendarViewer(
     val events by notesViewModel.events.collectAsState()
     var showAddEvent by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var showSuccess by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showSuccess) {
+        if (showSuccess) {
+            delay(1500)
+            showSuccess = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -72,7 +85,7 @@ fun CalendarViewer(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier.offset( y = (-100).dp),
+                modifier = Modifier.offset(y = (-100).dp),
                 onClick = { showAddEvent = true }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Añadir evento")
@@ -80,55 +93,64 @@ fun CalendarViewer(
         }
     ) { innerPadding ->
 
-        Column(
+        Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .padding(6.dp)
         ) {
 
-            Card(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(6.dp)
+                    .fillMaxSize()
+                    .padding(6.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(6.dp)
                 ) {
+                    Column(
+                        modifier = Modifier.padding(6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        CalendarScreen(events)
+                    }
+                }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    CalendarScreen(events)
-
+                if (showAddEvent) {
+                    AddEventFloatingCard(
+                        initialDate = LocalDate.now(),
+                        onDismiss = { showAddEvent = false },
+                        onConfirm = { title, description, date ->
+                            val note = Note(
+                                null,
+                                description,
+                                description,
+                                title,
+                                mapOf("Fecha" to date.toString()),
+                                0,
+                                LocalDateTime.now().toString()
+                            )
+                            notesViewModel.addNote(note)
+                            setReminder(context, date, title, description)
+                            showAddEvent = false
+                            showSuccess = true
+                        }
+                    )
                 }
             }
-            if (showAddEvent) {
 
-                AddEventFloatingCard(
-                    initialDate = LocalDate.now(),
-                    onDismiss = { showAddEvent = false },
-                    onConfirm = { title, description, date ->
-
-                        val note = Note(
-                            null,
-                            description,
-                            description,
-                            title,
-                            mapOf("Fecha" to date.toString()),
-                            0,
-                            LocalDate.now().toString()
-                        )
-                        notesViewModel.addNote(note)
-                        setReminder(context, date, title, description)
-                        showAddEvent = false
-                    }
-                )
-            }
-
+            SuccessToast(
+                message = "Evento agregado correctamente!",
+                show = showSuccess
+            )
         }
     }
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
