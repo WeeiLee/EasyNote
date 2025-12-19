@@ -212,22 +212,5 @@ object DatabaseManager {
         this.createTable(expenseTable)
         this.createTable(weightTable)
         this.createTable(othersTable)
-        this.insertNoteForTest()
-    }
-
-    private suspend fun insertNoteForTest() {
-        val types1 = mutableMapOf<String, String>()
-        types1["Nombre"] = "ANA"
-
-        val note2: Note = Note(
-            null,
-            "Reunión de PE",
-            "hoy hay un reunión",
-            "Reunión de PE",
-            null,
-            0,
-            "12-01-11",
-        )
-        this.addNote(note2)
     }
 }
