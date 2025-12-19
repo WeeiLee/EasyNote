@@ -17,4 +17,5 @@ val blue40 = Color(0xFF8B9D83)
 val Green80 = Color(0xFF8FA49B)
 val Gray80 = Color(0xFFB9C3C0)
 val Blue80 = Color(0xFFC8D4C2)
-//ffffff, FCEADE, FF8A5B
+
+val EventDayColor = Color(0xFFD25D5D)

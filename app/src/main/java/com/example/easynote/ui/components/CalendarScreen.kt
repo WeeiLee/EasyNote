@@ -82,7 +82,12 @@ fun CalendarScreen(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(it, fontWeight = FontWeight.Bold)
+                    Text(
+                        it,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
                 }
             }
         }
@@ -113,9 +118,9 @@ fun CalendarScreen(
                                 .padding(4.dp)
                                 .background(
                                     when {
-                                        hasEvent -> Color(0xFFFFCDD2) // día con eventos
-                                        isToday -> Color(0xFFBBDEFB)  // hoy
-                                        else -> Color(0xFFF0F0F0)
+                                        hasEvent -> Color(0xFFD25D5D)
+                                        isToday -> MaterialTheme.colorScheme.primaryContainer
+                                        else -> MaterialTheme.colorScheme.surfaceVariant
                                     },
                                     RoundedCornerShape(6.dp)
                                 )
@@ -126,7 +131,14 @@ fun CalendarScreen(
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            date?.let { Text(it.dayOfMonth.toString()) }
+                            date?.let {
+                                Text(
+                                    it.dayOfMonth.toString(),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+
                         }
 
                         dayNumber++
@@ -165,7 +177,7 @@ fun CalendarScreen(
                             Text(
                                 ev.description,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.DarkGray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Spacer(Modifier.height(6.dp))

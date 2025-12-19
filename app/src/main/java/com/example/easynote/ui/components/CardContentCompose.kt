@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,17 +47,17 @@ fun InfoImageCard(
         3 -> painterResource(R.drawable.spending)
         else -> painterResource(R.drawable.other)
     }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
 
         Column {
 
-            // Cuadro de la imagen
             Image(
                 painter = image,
                 contentDescription = null,
@@ -66,7 +67,6 @@ fun InfoImageCard(
                     .height(180.dp)
             )
 
-            // Contenido de la tarjeta
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,73 +74,76 @@ fun InfoImageCard(
             ) {
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
+
                         Text(
-                            text = note?.title ?: "",
-                            fontSize = 22.sp,
+                            text = note?.title.orEmpty(),
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(6.dp))
 
                         Text(
-                            text = note?.summary ?: "",
-                            fontSize = 14.sp,
-                            color = Color(0xFF444444)
-                        )
-                        Spacer(Modifier.height(4.dp))
-
-                        val dateText = note?.fields
-                            ?.get("Fecha")
-                            ?.toString()
-                            ?: "no especificado"
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .background(Color(0xFF4CAF50), shape = CircleShape)
-                            )
-
-                            Spacer(modifier = Modifier.width(6.dp))
-
-                            Text(
-                                text = "Fecha: $dateText",
-                                fontSize = 14.sp,
-                                color = Color.DarkGray
-                            )
-                        }
-
-                        Spacer(Modifier.height(8.dp))
-
-                        Text(
-                            text = note?.timestamp
-                                ?.let { extractDate(it) }
-                                ?: "",
-                            fontSize = 13.sp,
-                            color = Color.Gray
+                            text = note?.summary.orEmpty(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
-                    //Botón de eliminar
-                    IconButton(onClick = {onDeleteClick(note?.id ?: 0)}) {
+                    IconButton(
+                        onClick = { onDeleteClick(note?.id ?: 0) }
+                    ) {
                         Icon(
-                            imageVector = Icons.Filled.Delete,
+                            imageVector = Icons.Default.Delete,
                             contentDescription = "Eliminar",
-                            tint = Color.Red
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
+
+                Spacer(Modifier.height(16.dp))
+
+                val dateText = note?.fields
+                    ?.get("Fecha")
+                    ?.toString()
+                    ?: "No especificado"
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                CircleShape
+                            )
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+
+                    Text(
+                        text = "Fecha: $dateText",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = note?.timestamp
+                        ?.let { extractDate(it) }
+                        .orEmpty(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
 }
-
