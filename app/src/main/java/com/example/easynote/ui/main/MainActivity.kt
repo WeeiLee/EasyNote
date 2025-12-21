@@ -122,14 +122,18 @@ class MainActivity : ComponentActivity() {
         var isSuccess by remember { mutableStateOf(true) }
         var startTime by remember { mutableLongStateOf(0L) }
         var isValidRecording by remember { mutableStateOf(true) }
+
+        // State que verifica si hay conexión a Internet
         val internetAvailable by remember {
             internetStateFlow(context)
         }.collectAsState()
 
+        // State que controla el índice de la pestaña con wipe
         val pagerState = rememberPagerState(
             initialPage = selectedTab,
             pageCount = { tables.size}
         )
+        // Efecto que actualiza el índice de la pestaña cuando se cambia con un wipe
         LaunchedEffect(Unit) {
             snapshotFlow { pagerState.settledPage }
                 .drop(1)
@@ -138,20 +142,20 @@ class MainActivity : ComponentActivity() {
                     if (page != selectedTab) selectedTab = page
                 }
         }
-
+        // Efecto que actualiza la pestaña cuando se cambia con seleccion de topbar
         LaunchedEffect(selectedTab) {
             if (pagerState.currentPage != selectedTab) {
                 pagerState.scrollToPage(selectedTab)
             }
         }
-
+        // Efecto que muestra un mensaje de FEEDBACK y oculta después de 1.5 segundos
         LaunchedEffect(showSuccess) {
             if (showSuccess) {
                 delay(1500)
                 showSuccess = false
             }
         }
-
+        // Efecto que verifica si el tiempo de grabación es menor a 1.5 segundos y muestra un mensaje de error
         LaunchedEffect(isListening) {
             if (!isListening && startTime != 0L) {
                 val duration = SystemClock.elapsedRealtime() - startTime
@@ -161,14 +165,12 @@ class MainActivity : ComponentActivity() {
                     isSuccess = false
                     isValidRecording = false
                     showSuccess = true
-                    delay(1500)
-                    showSuccess = false
                     return@LaunchedEffect
                 }
             }
         }
 
-
+        //Efecto que procesa el texto de grabación y lo agrega a la base de datos
         LaunchedEffect(text, isListening) {
             if (!isListening &&
                 text.isNotEmpty() &&
@@ -183,7 +185,7 @@ class MainActivity : ComponentActivity() {
                 isSuccess = true
                 showSuccess = true
 
-
+                //Pasar a chatgpt service
                 val note = processText(text, tables)
                 tablesViewModel.addNote(note)
                 setNotification(context, note)
@@ -259,6 +261,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+// Función que procesa el texto de grabación con Chatgpt y devuelve una nota con formato correcto
 suspend fun processText(input: String, tables: List<NoteTable>) : Note {
     val chatGptManager = ChatGptManager
     val response = chatGptManager.request(input, tables)
@@ -274,6 +277,7 @@ suspend fun processText(input: String, tables: List<NoteTable>) : Note {
     )
 }
 
+//Definición de Navigation
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -291,7 +295,7 @@ fun AppNavigation() {
         composable("calendar") { CalendarViewer(0, navController) }
     }
 }
-
+//Creación del canal de notificaciones
 fun createEventChannel(context: Context) {
     val channel = NotificationChannel(
         "event_channel",
@@ -305,9 +309,11 @@ fun createEventChannel(context: Context) {
     manager.createNotificationChannel(channel)
 }
 
+//Creación de notificación para evento y alarma
 fun setNotification(context: Context, note: Note) {
     val eventTableId = 0
     val clockTableId = 1
+
     if (note.noteTableId == eventTableId) {
 
         val date = note.fields["Fecha"]
