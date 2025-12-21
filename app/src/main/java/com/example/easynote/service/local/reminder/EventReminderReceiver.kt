@@ -1,17 +1,21 @@
 package com.example.easynote.service.local.reminder
 
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.easynote.R
 
 class EventReminderReceiver : BroadcastReceiver() {
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onReceive(context: Context, intent: Intent) {
 
         val title = intent.getStringExtra("title") ?: "Recordatorio"
@@ -32,7 +36,7 @@ class EventReminderReceiver : BroadcastReceiver() {
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setSound(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI)
+            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
             .setAutoCancel(true)
             .build()
 

@@ -17,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.easynote.service.local.audio.AudioViewModel
+import com.example.easynote.viewmodels.AudioViewModel
 import com.example.easynote.service.local.database.DatabaseManager
 import com.example.easynote.ui.components.TopScrollableTab
 import com.example.easynote.ui.components.ContentCard
@@ -51,6 +51,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
 import com.example.easynote.service.local.chatGpt.ChatGptManager
+import com.example.easynote.service.local.internet.hasValidatedInternet
+import com.example.easynote.service.local.internet.internetStateFlow
 import com.example.easynote.ui.components.BottomBarWithHoldRecord
 import com.example.easynote.ui.components.CalendarViewer
 import com.example.easynote.ui.components.ChartViewer
@@ -120,6 +122,10 @@ class MainActivity : ComponentActivity() {
         var isSuccess by remember { mutableStateOf(true) }
         var startTime by remember { mutableLongStateOf(0L) }
         var isValidRecording by remember { mutableStateOf(true) }
+        val internetAvailable by remember {
+            internetStateFlow(context)
+        }.collectAsState()
+
         val pagerState = rememberPagerState(
             initialPage = selectedTab,
             pageCount = { tables.size}
@@ -136,6 +142,13 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(selectedTab) {
             if (pagerState.currentPage != selectedTab) {
                 pagerState.scrollToPage(selectedTab)
+            }
+        }
+
+        LaunchedEffect(showSuccess) {
+            if (showSuccess) {
+                delay(1500)
+                showSuccess = false
             }
         }
 
@@ -164,24 +177,21 @@ class MainActivity : ComponentActivity() {
             ) {
                 val duration = SystemClock.elapsedRealtime() - startTime
                 if (duration < 1500) return@LaunchedEffect
+
                 Log.d("texto a procesar", "TEXTO: $text")
                 message = "Generando su nota..."
                 isSuccess = true
                 showSuccess = true
-                delay(1000)
-                showSuccess = false
+
 
                 val note = processText(text, tables)
                 tablesViewModel.addNote(note)
                 setNotification(context, note)
                 message = "Nota agregada correctamente"
                 showSuccess = true
-                delay(1500)
-                showSuccess = false
                 audioViewModel.lastProcessedText = text
             }
         }
-
 
         Scaffold(
             contentWindowInsets = WindowInsets(0),
@@ -195,10 +205,17 @@ class MainActivity : ComponentActivity() {
             bottomBar = {
                 BottomBarWithHoldRecord(
                     onRecordStart = {
-                        isValidRecording = true
-                        selectedTab = 0
-                        startTime = SystemClock.elapsedRealtime()
-                        audioViewModel.startRecording(context) },
+                        if (!internetAvailable) {
+                            message = "No hay conexión a Internet"
+                            isSuccess = false
+                            showSuccess = true
+                            return@BottomBarWithHoldRecord }
+
+                            isValidRecording = true
+                            selectedTab = 0
+                            startTime = SystemClock.elapsedRealtime()
+                            audioViewModel.startRecording(context)
+                         },
                     onRecordStop = {
                         Log.d("stop----", "stop")
                         audioViewModel.stopRecording() },
@@ -207,7 +224,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                 )
             }
-
         )  { innerPadding ->
 
             Box(

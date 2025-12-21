@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import androidx.compose.ui.unit.dp
@@ -17,9 +16,7 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun LineChart(entries: Map<LocalDate, Float>) {

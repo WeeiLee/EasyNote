@@ -1,8 +1,7 @@
-package com.example.easynote.service.local
+package com.example.easynote.service.local.database
 
 import com.example.easynote.models.Note
 import com.example.easynote.models.NoteTable
-import com.example.easynote.service.local.database.DatabaseManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 

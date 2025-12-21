@@ -1,10 +1,11 @@
-package com.example.easynote.service.local.audio
+package com.example.easynote.viewmodels
 
 import android.content.Context
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import androidx.lifecycle.ViewModel
+import com.example.easynote.service.local.audio.SpeechRecognizerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

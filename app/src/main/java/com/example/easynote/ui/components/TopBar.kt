@@ -16,35 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.easynote.ui.theme.EasyNoteTheme
 
-//@Preview(showBackground = true)
-@Composable
-fun PreviewTask() {
-    EasyNoteTheme(darkTheme = false) {
-        HomeScreen()
-    }
-}
 
-@Composable
-fun HomeScreen() {
-
-    /*val context = LocalContext.current
-
-    val audioViewModel: AudioViewModel = viewModel()
-    LaunchedEffect(Unit) {
-        audioViewModel.configure(context)
-    }
-    audioViewModel.configure(context)
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    val isMenuOpen = drawerState.isOpen
-    val text by audioViewModel.text.collectAsState()
-    val isListening by audioViewModel.isListening.collectAsState()
-    */
-}
-
-fun processAudioToTxt(path: String): String{
-    return ""
-}
 
 @Composable
 fun TopScrollableTab(
